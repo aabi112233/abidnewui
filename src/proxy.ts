@@ -6,7 +6,7 @@ import { auth } from "@/auth";
 const protectedRoutes = ["/dashboard"];
 const adminRoutes = ["/admin"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
   // Check if it's a protected or admin route
