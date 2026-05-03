@@ -8,7 +8,7 @@ import {
 
 interface PaymentAccount {
   id: string; label: string; accountTitle: string;
-  accountNumber: string; type: string; logoUrl?: string;
+  accountNumber: string; type: string; logoUrl?: string | null;
   isActive: boolean; sortOrder: number;
 }
 

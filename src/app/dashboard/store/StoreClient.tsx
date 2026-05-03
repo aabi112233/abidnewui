@@ -32,7 +32,7 @@ interface Course {
 
 interface BundleCourse { course: { id: string; title: string }; }
 interface Bundle { id: string; title: string; description: string; price: number; courses: BundleCourse[]; }
-interface PaymentAccount { id: string; label: string; accountTitle: string; accountNumber: string; type: string; logoUrl?: string; }
+interface PaymentAccount { id: string; label: string; accountTitle: string; accountNumber: string; type: string; logoUrl?: string | null; }
 
 type ActiveTab = "courses" | "bundles";
 type SelectedItem = { type: "course" | "bundle"; id: string; title: string; price: number; };

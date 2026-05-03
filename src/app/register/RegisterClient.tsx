@@ -15,7 +15,7 @@ interface PackageData {
 }
 interface PaymentAccount {
   id: string; label: string; accountTitle: string;
-  accountNumber: string; type: string; logoUrl?: string;
+  accountNumber: string; type: string; logoUrl?: string | null;
 }
 
 function CopyBtn({ text }: { text: string }) {
