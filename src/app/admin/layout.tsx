@@ -4,6 +4,8 @@ import AdminSidebar from "./components/AdminSidebar";
 import AdminMobileTopBar from "./components/AdminMobileTopBar";
 import AdminScrollArea from "./components/AdminScrollArea";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminLayout({
   children,
 }: {

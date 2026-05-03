@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import AdminPaymentsClient from "./AdminPaymentsClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPaymentsPage() {
   const purchases = await prisma.purchase.findMany({
     select: {

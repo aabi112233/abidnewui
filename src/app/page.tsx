@@ -1,4 +1,6 @@
 import { auth } from "@/auth";
+
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import HomePageClient from "@/components/HomePageClient";
 import LoggedInHome from "@/components/LoggedInHome";

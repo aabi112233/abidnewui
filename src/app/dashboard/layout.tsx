@@ -9,6 +9,8 @@ import NotificationBell from "./NotificationBell";
 import MobileTopBar from "./MobileTopBar";
 import DesktopTopBar from "./DesktopTopBar";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardLayout({
   children,
 }: {
