@@ -1,8 +1,9 @@
 "use client";
 
-import { Bell, ChevronDown } from "lucide-react";
+import { Search, Bell, ChevronDown } from "lucide-react";
 import ProfileDropdown from "./ProfileDropdown";
 import NotificationBell from "./NotificationBell";
+import { useState } from "react";
 
 export default function DesktopTopBar({
   userName,
@@ -13,13 +14,26 @@ export default function DesktopTopBar({
   userEmail: string;
   isMockUser: boolean;
 }) {
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
-    <div className="hidden md:flex items-center justify-end px-8 py-4 bg-[#F8FAFC]">
+    <div className="learnova-topbar">
+      {/* Search Bar */}
+      <div className="learnova-search-wrapper">
+        <Search className="learnova-search-icon" />
+        <input
+          type="text"
+          placeholder="Search courses, lessons, resources..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="learnova-search-input"
+        />
+      </div>
+
+      {/* Right side */}
       <div className="flex items-center gap-3">
         <NotificationBell isMockUser={isMockUser} />
-        
-        <div className="h-8 w-px bg-slate-200 mx-1"></div>
-        
+        <div className="h-8 w-px bg-slate-200 mx-1" />
         <ProfileDropdown userName={userName} userEmail={userEmail} align="bottom" />
       </div>
     </div>

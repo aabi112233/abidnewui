@@ -3,100 +3,105 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, ShoppingBag, BookOpen, Wallet,
-  User, ShieldAlert, Network, GraduationCap, Megaphone, TrendingUp, Calculator
+  User, ShieldAlert, Network, GraduationCap, Megaphone, Calculator,
+  Calendar, MessageSquare, FileText, Award, Settings, ChevronRight, Star
 } from "lucide-react";
 
 const mainNav = [
   { href: "/dashboard",              icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/dashboard/store",        icon: ShoppingBag,     label: "Store" },
+  { href: "/dashboard/store",        icon: ShoppingBag,     label: "My Courses" },
   { href: "/dashboard/learning",     icon: BookOpen,        label: "My Learning" },
   { href: "/dashboard/network",      icon: Network,         label: "My Network" },
   { href: "/dashboard/wallet",       icon: Wallet,          label: "Wallet" },
-  { href: "/dashboard/calculator",   icon: Calculator,      label: "Earnings Calculator" },
+  { href: "/dashboard/calculator",   icon: Calculator,      label: "Calculator" },
   { href: "/dashboard/certificates", icon: GraduationCap,   label: "Certificates" },
-  { href: "/dashboard/announcements",icon: Megaphone,       label: "Announcements" },
-  { href: "/dashboard/profile",      icon: User,            label: "Profile" },
+  { href: "/dashboard/announcements", icon: Megaphone,      label: "Announcements" },
+  { href: "/dashboard/profile",      icon: Settings,        label: "Settings" },
 ];
 
 export default function DesktopSidebar({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex flex-col w-[256px] bg-white border-r border-[var(--border-soft)] sticky top-0 h-screen overflow-y-auto custom-scrollbar">
+    <aside className="learnova-sidebar">
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-5 h-[68px] shrink-0 mb-4">
+      <div className="learnova-sidebar-logo">
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-md">
+          <div className="learnova-logo-icon">
             <BookOpen className="w-[18px] h-[18px] text-white" />
           </div>
-          <span className="text-xl font-bold text-slate-900">NexusLearn</span>
+          <span className="text-[20px] font-extrabold tracking-tight" style={{ color: '#1e293b' }}>
+            Nexus<span style={{ color: 'var(--brand-600)' }}>Learn</span>
+          </span>
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-5 space-y-0.5">
-        <p className="text-[10px] font-black text-[var(--text-tertiary)] uppercase tracking-[0.15em] px-3 mb-3">Main</p>
+      <nav className="learnova-sidebar-nav custom-scrollbar">
         {mainNav.map(({ href, icon: Icon, label }) => {
           const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
           return (
             <Link
               key={href} href={href} prefetch={false}
-              className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-[14px] font-semibold transition-all duration-200 group relative ${
-                active
-                  ? "bg-blue-50 text-blue-700"
-                  : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
-              }`}
+              className={`learnova-nav-item ${active ? "learnova-nav-active" : ""}`}
             >
-              <Icon className={`w-5 h-5 transition-colors ${active ? "text-blue-600" : "text-slate-400 group-hover:text-slate-500"}`} />
-              <span className={active ? "font-bold" : "font-medium"}>{label}</span>
+              {active && <div className="learnova-nav-indicator" />}
+              <Icon className={`w-[20px] h-[20px] ${active ? "text-[var(--brand-600)]" : "text-slate-400"}`} />
+              <span>{label}</span>
             </Link>
           );
         })}
 
         {isAdmin && (
           <>
-            <div className="my-3 border-t border-[var(--border-soft)]" />
-            <p className="text-[10px] font-black text-[var(--text-tertiary)] uppercase tracking-[0.15em] px-3 mb-3">Admin</p>
+            <div className="my-3 border-t border-slate-100" />
             <Link
               href="/admin" prefetch={false}
-              className={`flex items-center gap-3 px-3 py-[9px] rounded-xl text-[13px] font-semibold transition-all duration-200 group relative ${
-                pathname.startsWith("/admin")
-                  ? "bg-red-50 text-red-700"
-                  : "text-[var(--text-secondary)] hover:text-red-700 hover:bg-red-50"
-              }`}
+              className={`learnova-nav-item ${pathname.startsWith("/admin") ? "learnova-nav-active" : ""}`}
             >
-              {pathname.startsWith("/admin") && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-red-500 rounded-r-full" />
-              )}
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                pathname.startsWith("/admin")
-                  ? "bg-red-500 text-white shadow-md"
-                  : "bg-red-50 text-red-400 group-hover:bg-red-100"
-              }`}>
-                <ShieldAlert className="w-[16px] h-[16px]" />
-              </div>
-              <span className={pathname.startsWith("/admin") ? "font-bold" : ""}>Admin Console</span>
+              {pathname.startsWith("/admin") && <div className="learnova-nav-indicator" />}
+              <ShieldAlert className={`w-[20px] h-[20px] ${pathname.startsWith("/admin") ? "text-red-500" : "text-slate-400"}`} />
+              <span>Admin Console</span>
             </Link>
           </>
         )}
       </nav>
 
-      {/* Bottom User Profile */}
-      <div className="p-4 shrink-0 border-t border-slate-100 mt-auto">
-        <div className="flex items-center justify-between p-3 rounded-2xl border border-slate-200 bg-white shadow-sm cursor-pointer hover:bg-slate-50 transition-colors">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=olivia" alt="Olivia Smith" className="w-full h-full object-cover" />
+      {/* Continue Learning Widget */}
+      <div className="learnova-sidebar-widget">
+        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3">Continue Learning</p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-sm">
+            <BookOpen className="w-5 h-5 text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[13px] font-bold text-slate-800 leading-tight truncate">Digital Skills</p>
+            <div className="mt-1.5 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-full bg-[var(--brand-600)] rounded-full" style={{ width: '66%' }} />
             </div>
-            <div>
-              <p className="text-sm font-bold text-slate-900 leading-none">Olivia Smith</p>
-              <p className="text-[11px] text-slate-500 mt-1">View profile</p>
+            <p className="text-[10px] font-semibold text-slate-400 mt-1">66% complete</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom User Profile */}
+      <div className="learnova-sidebar-user">
+        <Link href="/dashboard/profile" className="learnova-user-card">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-200 shrink-0">
+              <img 
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=olivia" 
+                alt="User" 
+                className="w-full h-full object-cover" 
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-bold text-slate-800 leading-none truncate">Olivia Smith</p>
+              <p className="text-[11px] text-slate-400 mt-0.5">View profile</p>
             </div>
           </div>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
-            <path d="m9 18 6-6-6-6"/>
-          </svg>
-        </div>
+          <ChevronRight className="w-4 h-4 text-slate-300" />
+        </Link>
       </div>
     </aside>
   );
