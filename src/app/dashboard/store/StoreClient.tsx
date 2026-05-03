@@ -66,6 +66,16 @@ function LevelBadge({ level }: { level: string }) {
   );
 }
 
+const THUMB_COLORS = ["learnova-thumb-blue", "learnova-thumb-purple", "learnova-thumb-green", "learnova-thumb-orange", "learnova-thumb-pink", "learnova-thumb-teal"];
+const COURSE_ICONS = [
+  <div key="1" className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center"><span className="text-2xl">💻</span></div>,
+  <div key="2" className="w-14 h-14 rounded-full bg-purple-500/20 flex items-center justify-center"><span className="text-2xl">🎨</span></div>,
+  <div key="3" className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center"><span className="text-2xl">📊</span></div>,
+  <div key="4" className="w-14 h-14 rounded-xl bg-indigo-500/20 flex items-center justify-center"><span className="text-2xl">📱</span></div>,
+  <div key="5" className="w-12 h-12 rounded-xl bg-teal-500/20 flex items-center justify-center"><span className="text-2xl">🔒</span></div>,
+  <div key="6" className="w-14 h-14 rounded-xl bg-pink-500/20 flex items-center justify-center"><span className="text-2xl">📢</span></div>,
+];
+
 function CourseCard({
   course,
   owned,
@@ -78,167 +88,85 @@ function CourseCard({
   progressPercent: number;
 }) {
   const totalLessons = course.sections?.reduce((s, sec) => s + sec.lessons.length, 0) ?? 0;
-  const discount = course.originalPrice
-    ? Math.round(((course.originalPrice - course.price) / course.originalPrice) * 100)
-    : 0;
-  // Derive a views count from enrolled for social proof
-  const viewsCount = Math.round(course.enrolledCount * 1.8 + 200);
+  
+  // Extract number from id to use as index for mock colors/icons
+  const idNum = course.id.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+  const isCompleted = owned && progressPercent >= 100;
 
   return (
-    <div className="relative group z-10 hover:z-50 h-full">
-      {/* ── Base Card ── */}
-      <Link
-        href={`/dashboard/store/${course.id}`}
-        className="bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col overflow-hidden h-full"
-      >
-        {/* Thumbnail */}
-        <div className="relative h-44 overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex-shrink-0">
-          {course.thumbnailUrl ? (
-            <img
-              src={course.thumbnailUrl}
-              alt={course.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Sparkles className="w-16 h-16 text-white/20" />
-            </div>
-          )}
-
-          {/* Badges — top-right like competitor */}
-          <div className="absolute top-3 right-3 flex items-center gap-2">
-            {owned && (
-              <span className="text-[10px] font-black bg-green-500 text-white px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md">
-                <CheckCircle2 className="w-3 h-3" /> Owned
-              </span>
-            )}
-            {discount > 0 && !owned && (
-              <span className="text-[10px] font-black bg-red-500 text-white px-2 py-0.5 rounded-full shadow-sm">
-                Hot
-              </span>
-            )}
+    <div className="learnova-course-card cursor-pointer" onClick={() => { if(!owned) onBuy(); else window.location.href = `/dashboard/store/${course.id}`; }}>
+      {/* Thumbnail */}
+      {course.thumbnailUrl ? (
+        <div className="relative h-48 overflow-hidden rounded-t-[20px] flex-shrink-0">
+          <img src={course.thumbnailUrl} alt={course.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        </div>
+      ) : (
+        <div className={`learnova-card-thumb ${THUMB_COLORS[idNum % THUMB_COLORS.length]}`}>
+          <div className="flex items-center gap-1">
+            {COURSE_ICONS[idNum % COURSE_ICONS.length]}
           </div>
-
-          {/* Progress bar for owned */}
           {owned && (
-            <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-black/30">
-              <div
-                className="h-full bg-green-400 transition-all duration-500"
-                style={{ width: `${progressPercent}%` }}
-              />
+            <div className={`learnova-card-badge ${isCompleted ? 'learnova-badge-completed' : 'learnova-badge-progress'}`}>
+              {isCompleted ? 'Completed' : 'In Progress'}
+            </div>
+          )}
+          {!owned && (
+            <div className="learnova-card-badge learnova-badge-progress bg-white text-[var(--brand-600)] shadow-sm">
+              Rs. {course.price.toLocaleString()}
             </div>
           )}
         </div>
+      )}
 
-        {/* Body — MasterStudy layout order */}
-        <div className="p-4 flex-1 flex flex-col">
-          {/* Category */}
-          {course.category && (
-            <p className="text-[11px] font-semibold text-slate-400 mb-1">
-              {course.category}
-            </p>
-          )}
-
-          {/* Title */}
-          <h3 className="text-sm font-bold text-slate-800 leading-snug mb-3 line-clamp-2">
-            {course.title}
-          </h3>
-
-          {/* Students + Views row (MasterStudy style) */}
-          <div className="flex items-center justify-between text-xs text-slate-400 mb-2.5 mt-auto">
-            <span className="flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5" /> {course.enrolledCount.toLocaleString()}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Eye className="w-3.5 h-3.5" /> {viewsCount.toLocaleString()}
-            </span>
-          </div>
-
-          {/* Rating row */}
-          <div className="flex items-center justify-between pt-2.5 border-t border-slate-100">
-            <div className="flex items-center gap-1.5">
-              <StarRating rating={course.rating} />
-              <span className="text-xs font-bold text-slate-600">{course.rating.toFixed(1)}</span>
-            </div>
-            <div>
-              {course.price === 0 ? (
-                <span className="text-sm font-black text-emerald-600">Free</span>
-              ) : (
-                <span className="text-sm font-black text-slate-800">
-                  Rs. {course.price.toLocaleString()}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      </Link>
-
-      {/* ── Hover Card Overlay (covers the card exactly) ── */}
-      <div className="hidden lg:flex absolute inset-0 bg-white rounded-xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] p-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto border border-slate-200 flex-col gap-3 z-[60] overflow-hidden">
+      {/* Body */}
+      <div className="learnova-card-body relative z-10 bg-white">
+        {course.category && (
+          <p className="text-[11px] font-bold text-[var(--brand-600)] uppercase tracking-wider mb-1.5">
+            {course.category}
+          </p>
+        )}
+        <h3 className="learnova-card-title">{course.title}</h3>
         
-        {/* Instructor Info */}
         {course.instructorName && (
-          <div className="flex items-center gap-2.5">
-            {course.instructorImage ? (
-              <img src={course.instructorImage} alt={course.instructorName} className="w-8 h-8 rounded-full object-cover ring-2 ring-slate-100" />
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-[var(--brand-100)] flex items-center justify-center text-[var(--brand-700)] font-bold text-xs">
-                {course.instructorName.charAt(0)}
-              </div>
-            )}
-            <span className="text-xs font-semibold text-slate-500">{course.instructorName}</span>
+          <div className="learnova-card-instructor">
+            <img src={course.instructorImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${course.instructorName.toLowerCase().replace(' ', '')}`} alt={course.instructorName} />
+            <span>{course.instructorName}</span>
           </div>
         )}
 
-        {/* Title */}
-        <h4 className="text-base font-bold text-slate-800 leading-tight line-clamp-2">
-          {course.title}
-        </h4>
-
-        {/* Short Description */}
-        <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">
-          {course.shortDescription || course.description}
-        </p>
-
-        {/* Meta Stats Row */}
-        <div className="flex items-center gap-5 text-xs text-slate-400 pt-1">
-          {course.level && (
-            <span className="flex items-center gap-1.5">
-              <BarChart2 className="w-3.5 h-3.5" /> 
-              <span className="capitalize">{course.level.toLowerCase()}</span>
-            </span>
-          )}
-          {totalLessons > 0 && (
-            <span className="flex items-center gap-1.5">
-              <BookOpen className="w-3.5 h-3.5" /> {totalLessons} Lectures
-            </span>
-          )}
-          {course.duration && (
-            <span className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5" /> {course.duration}
-            </span>
+        {/* Progress or Price Action */}
+        <div className="mt-4">
+          {owned ? (
+            <div className="learnova-card-progress">
+              <div className="learnova-progress-bar">
+                <div
+                  className={`learnova-progress-fill ${isCompleted ? 'completed' : ''}`}
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+              <span className={`learnova-progress-text ${isCompleted ? 'completed' : ''}`}>
+                {progressPercent}% complete
+              </span>
+            </div>
+          ) : (
+             <div className="flex items-center justify-between pt-1">
+              <div className="flex items-center gap-1">
+                <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                <span className="text-sm font-bold text-slate-700">{course.rating.toFixed(1)}</span>
+                <span className="text-xs text-slate-400 ml-1">({course.enrolledCount})</span>
+              </div>
+              <button onClick={(e) => { e.stopPropagation(); onBuy(); }} className="text-sm font-bold text-white bg-[var(--brand-600)] px-4 py-1.5 rounded-full hover:bg-[var(--brand-700)] transition-colors shadow-md shadow-blue-100">
+                Enroll Now
+              </button>
+            </div>
           )}
         </div>
 
-        {/* CTA */}
-        <Link
-          href={`/dashboard/store/${course.id}`}
-          className="w-full bg-[var(--brand-600)] hover:bg-[var(--brand-700)] text-white text-sm font-bold py-3 rounded-xl text-center transition-colors shadow-md shadow-blue-100 mt-auto"
-        >
-          Preview this course
-        </Link>
-
-        {/* Wishlist + Price footer */}
-        <div className="flex items-center justify-between">
-          <button
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-            className="text-xs text-slate-400 hover:text-red-500 transition-colors flex items-center gap-1.5"
-          >
-            <Heart className="w-3.5 h-3.5" /> Add to Wishlist
-          </button>
-          <span className="text-base font-black text-slate-800">
-            {course.price === 0 ? "Free" : `Rs. ${course.price.toLocaleString()}`}
-          </span>
+        {/* Meta */}
+        <div className="learnova-card-meta mt-4 pt-4 border-t border-slate-100">
+          <span><BookOpen className="w-3.5 h-3.5" /> {totalLessons > 0 ? totalLessons : "10"} Lessons</span>
+          <span><Clock className="w-3.5 h-3.5" /> {course.duration || "Self-paced"}</span>
         </div>
       </div>
     </div>
