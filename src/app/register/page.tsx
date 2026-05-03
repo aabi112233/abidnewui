@@ -17,7 +17,7 @@ export default async function RegisterPage() {
       },
       orderBy: { price: "asc" },
     }),
-    (prisma as any).paymentAccount.findMany({
+    prisma.paymentAccount.findMany({
       where: { isActive: true },
       orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }]
     })
