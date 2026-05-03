@@ -5,8 +5,6 @@ import { prisma } from "@/lib/prisma";
 import HomePageClient from "@/components/HomePageClient";
 import LoggedInHome from "@/components/LoggedInHome";
 
-export const dynamic = "force-dynamic";
-
 export default async function Home() {
   const session = await auth();
 
